@@ -1,5 +1,5 @@
 <?php
-namespace app\cms;
+namespace stelssoft\yiiCmsCore;
 
 use Yii;
 use yii\base\BaseObject;

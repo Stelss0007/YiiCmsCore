@@ -1,5 +1,5 @@
 <?php
-namespace app\cms\grid;
+namespace stelssoft\yiiCmsCore\grid;
 
 use Yii;
 use yii\grid\ActionColumn as BaseActionColumn;
