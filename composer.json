@@ -1,0 +1,23 @@
+{
+    "name": "stelssoft/YiiCmsCore",
+    "type": "library",
+    "description": "Yii2 CMS Core",
+    "keywords": ["Yii2", "CMS", "Yii2 CSM", "CMS Yii"],
+    "homepage": "https://github.com/Stelss0007/YiiCmsCore",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ruslan Atamas",
+            "email": "stelss1986@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "yiisoft/yii2": "2.0.15.1",
+        "yiisoft/yii2-gii": "^2.0",
+        "yiisoft/yii2-debug": "^2.0"
+    },
+    "autoload": {
+        "psr-4": { "Stelssoft\\YiiCmsCore\\": "" }
+    },
+}
