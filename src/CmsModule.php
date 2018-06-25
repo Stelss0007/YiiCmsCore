@@ -1,6 +1,6 @@
 <?php
 
-namespace stelssoft\yiiCmsCore;
+namespace Stelssoft\YiiCmsCore;
 
 use Yii;
 use yii\base\Module;
