@@ -1,5 +1,5 @@
 <?php
-namespace stelssoft\yiiCmsCore\grid;
+namespace Stelssoft\YiiCmsCore\grid;
 
 use Yii;
 use yii\grid\ActionColumn as BaseActionColumn;
@@ -7,9 +7,11 @@ use yii\helpers\Html;
 
 class ActionColumn  extends BaseActionColumn
 {
+    //public $headerOptions = ['class' => 'action-column btn-group  btn-group-sm'];
+
     protected function initDefaultButtons()
     {
-        $this->initDefaultButton('view', 'eye-open');
+        $this->initDefaultButton('view', 'eye');
         $this->initDefaultButton('update', 'pencil');
         $this->initDefaultButton('delete', 'trash', [
             'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
@@ -28,6 +30,8 @@ class ActionColumn  extends BaseActionColumn
     {
         if (!isset($this->buttons[$name]) && strpos($this->template, '{' . $name . '}') !== false) {
             $this->buttons[$name] = function ($url, $model, $key) use ($name, $iconName, $additionalOptions) {
+                $btnClass = 'btn-default';
+
                 switch ($name) {
                     case 'view':
                         $title = Yii::t('yii', 'View');
@@ -37,6 +41,7 @@ class ActionColumn  extends BaseActionColumn
                         break;
                     case 'delete':
                         $title = Yii::t('yii', 'Delete');
+                        $btnClass = 'btn-danger';
                         break;
                     default:
                         $title = ucfirst($name);
@@ -45,11 +50,21 @@ class ActionColumn  extends BaseActionColumn
                     'title' => $title,
                     'aria-label' => $title,
                     'data-pjax' => '0',
-                    'class' => 'btn-control'
+                    'class' => 'btn btn-control ' . $btnClass,
                 ], $additionalOptions, $this->buttonOptions);
-                $icon = Html::tag('span', '', ['class' => "icon-$iconName"]);
+
+                $icon = Html::tag('i', '', ['class' => 'fa fa-' . $iconName]);
+
                 return Html::a($icon, $url, $options);
             };
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function renderDataCellContent($model, $key, $index)
+    {
+        return Html::tag('div', parent::renderDataCellContent($model, $key, $index), ['class' => 'btn-group btn-group-sm']);;
     }
 }
