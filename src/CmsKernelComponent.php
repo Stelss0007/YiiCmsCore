@@ -25,6 +25,9 @@ class CmsKernelComponent extends BaseObject
             'admin' => [
                 'class' => 'app\modules\admin\Module',
             ],
+            'user' => [
+                'class' => 'app\modules\user\Module',
+            ],
         ]);
     }
 
