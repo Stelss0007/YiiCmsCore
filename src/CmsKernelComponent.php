@@ -16,6 +16,7 @@ class CmsKernelComponent extends BaseObject
         $this->setCmsRouteRules();
         $this->setCmsCurrentTheme();
         $this->selLocale();
+        $this->registerTranslations();
 
         //Динамическое добавление модулей (подтягивать с базы установленые модули)
         Yii::$app->modules = array_merge(Yii::$app->modules, [
@@ -34,7 +35,7 @@ class CmsKernelComponent extends BaseObject
     /**
      * Set current theme from DataBase
      */
-    public function setCmsCurrentTheme()
+    private function setCmsCurrentTheme()
     {
         //Установка темы (подтягивать с базы активную тему)
         if ($this->checkIfAdminInterface()) {
@@ -54,7 +55,7 @@ class CmsKernelComponent extends BaseObject
         ]);
     }
 
-    public function setCmsRouteRules()
+    private function setCmsRouteRules()
     {
         Yii::$app->getUrlManager()->addRules([
             ['class' => CmsUrlRule::class],
@@ -77,16 +78,32 @@ class CmsKernelComponent extends BaseObject
         ]);
     }
 
-    public function selLocale()
+    private function selLocale()
     {
         Yii::$app->language = 'ru-RU';
         Yii::$app->sourceLanguage = 'en-US';
     }
+
     private function checkIfAdminInterface()
     {
         $pathInfo = Yii::$app->getRequest()->getPathInfo();
         $pathInfoParts = explode('/', $pathInfo);
 
         return (isset($pathInfoParts[0]) && $pathInfoParts[0] === 'admin');
+    }
+
+    /**
+     *
+     */
+    private function registerTranslations()
+    {
+        Yii::$app->i18n->translations['app'] = [
+            'class'          => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en',
+            'basePath'       => '@app/messages',
+            'fileMap'        => [
+                'app' => 'app.php',
+            ],
+        ];
     }
 }
