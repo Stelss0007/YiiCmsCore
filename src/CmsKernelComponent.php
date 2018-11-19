@@ -42,7 +42,7 @@ class CmsKernelComponent extends BaseObject
             $currentThemeName = 'admin';
         } else {
             $currentActiveTheme = CmsTheme::findOne(['active' => 1]);
-            $currentThemeName = $currentActiveTheme->name;
+            $currentThemeName = 'bydiwell';//$currentActiveTheme->name;
         }
 
         Yii::$app->getView()->theme = new Theme([
