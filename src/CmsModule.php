@@ -8,6 +8,11 @@ use yii\base\Module;
 class CmsModule extends Module
 {
     /**
+     * @var string controller name
+     */
+    public $defaultControllerName = 'DefaultController';
+
+    /**
      *
      */
     public function init()
