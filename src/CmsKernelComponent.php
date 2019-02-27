@@ -59,13 +59,13 @@ class CmsKernelComponent extends BaseObject
     {
         Yii::$app->getUrlManager()->addRules([
             ['class' => CmsUrlRule::class],
-            [
-                'pattern' => '/',
-                'route' => 'main/main/index',
-            ],
+
             [
                 'pattern' => '<action>',
-                'route' => 'main/main/<action>',
+                'route' => 'main/default/<action>',
+                'defaults' => [
+                    'action' => 'index',
+                ],
             ],
             [
                 'pattern' => 'admin',
@@ -85,7 +85,7 @@ class CmsKernelComponent extends BaseObject
             ],
             [
                 'pattern' => '<module>/<action>',
-                'route' => '<module>/<module>/<action>',
+                'route' => '<module>/default/<action>',
                 'defaults' => [
                     'action' => 'index',
                 ],
