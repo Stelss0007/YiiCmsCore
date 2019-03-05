@@ -22,11 +22,19 @@ class CmsModule extends Module
     }
 
     /**
+     * @return string
+     */
+    public static function getTranlateCategory()
+    {
+        return 'modules/' . self::getModuleName();
+    }
+
+    /**
      *
      */
     public static function registerTranslations()
     {
-        $translateCategory = 'modules/' . self::getModuleName();
+        $translateCategory = self::getTranlateCategory();
 
         Yii::$app->i18n->translations[$translateCategory] = [
             'class'          => 'yii\i18n\PhpMessageSource',
@@ -52,7 +60,12 @@ class CmsModule extends Module
             self::registerTranslations();
         }
 
-        return Yii::t($translateCategory, $message, $params, $language);
+        if (Yii::t($translateCategory, $message, $params, $language) !== $message) {
+
+            return Yii::t($translateCategory, $message, $params, $language);
+        }
+
+        return Yii::t('app', $message, $params, $language);
     }
 
     /**
@@ -63,5 +76,44 @@ class CmsModule extends Module
         $namespacePathArray = explode('\\', static::class);
 
         return $namespacePathArray[count($namespacePathArray) - 2];
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfigFile()
+    {
+        $modulePath = dirname((new \ReflectionClass(static::class))->getFileName());
+        $configSrc = $modulePath . '/config.php';
+        if (file_exists($configSrc)) {
+            return require $configSrc;
+        }
+
+        return [];
+    }
+
+    /**
+     * @param null|string $module
+     * @return array
+     */
+    public function getConfig($module = null)
+    {
+        $defaultConfigData = $this->getConfigFile();
+
+        $moduleConfig = CmsConfiguration::findOne(['module' => $module ?:$this->id]);
+
+        if (!$moduleConfig) {
+            return $defaultConfigData;
+        }
+
+        $databaseConfigData = $moduleConfig->data ? unserialize($moduleConfig->data) : [];
+
+        foreach ($defaultConfigData as $key => $value) {
+            if (isset($databaseConfigData[$key])) {
+                $defaultConfigData[$key] = $databaseConfigData[$key];
+            }
+        }
+
+        return $defaultConfigData;
     }
 }

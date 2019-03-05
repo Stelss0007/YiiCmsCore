@@ -13,6 +13,8 @@ class CmsKernelComponent extends BaseObject
     {
         parent::init();
 
+        Yii::setAlias('@cms', '@vendor/stelssoft/yii-cms-core/src');
+
         $this->setCmsRouteRules();
         $this->setCmsCurrentTheme();
         $this->selLocale();
