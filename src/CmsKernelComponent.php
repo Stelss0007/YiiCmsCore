@@ -1,10 +1,10 @@
 <?php
 namespace Stelssoft\YiiCmsCore;
 
+use app\modules\install\Module as InstallModule;
 use Yii;
 use yii\base\BaseObject;
 use yii\base\Theme;
-use app\modules\theme\models\Theme as CmsTheme;
 
 class CmsKernelComponent extends BaseObject
 {
@@ -22,16 +22,35 @@ class CmsKernelComponent extends BaseObject
 
         //Динамическое добавление модулей (подтягивать с базы установленые модули)
         Yii::$app->modules = array_merge(Yii::$app->modules, [
+            'install' => [
+                'class' => InstallModule::class,
+            ],
+        ]);
+
+        Yii::$app->modules = array_merge(Yii::$app->modules, $this->getActiveModules());
+    }
+
+    private function getActiveModules()
+    {
+        return [
             'theme' => [
                 'class' => 'app\modules\theme\Module',
             ],
-            'admin' => [
-                'class' => 'app\modules\admin\Module',
-            ],
+
             'user' => [
                 'class' => 'app\modules\user\Module',
             ],
-        ]);
+            'module' => [
+                'class' => 'app\modules\module\Module',
+            ],
+
+
+            'admin' => [
+                'class' => 'app\modules\admin\Module',
+            ],
+
+
+        ];
     }
 
     /**
@@ -43,8 +62,9 @@ class CmsKernelComponent extends BaseObject
         if ($this->checkIfAdminInterface()) {
             $currentThemeName = 'admin';
         } else {
-            $currentActiveTheme = CmsTheme::findOne(['active' => 1]);
-            $currentThemeName = 'bydiwell';//$currentActiveTheme->name;
+            //$currentActiveTheme = CmsTheme::findOne(['active' => 1]);
+            //$currentThemeName = $currentActiveTheme->name;
+            $currentThemeName = 'bydiwell';
         }
 
         Yii::$app->getView()->theme = new Theme([
@@ -55,13 +75,24 @@ class CmsKernelComponent extends BaseObject
                 '@app/modules' => '@app/themes/' . $currentThemeName . '/modules',
             ],
         ]);
+
+        Yii::$app->params['current_theme'] = $currentThemeName;
     }
 
     private function setCmsRouteRules()
     {
+        $this->addModulesRoutes();
+
         Yii::$app->getUrlManager()->addRules([
             ['class' => CmsUrlRule::class],
 
+            [
+                'pattern' => 'install',
+                'route' => 'install/default/index',
+                'defaults' => [
+                    'action' => 'index',
+                ],
+            ],
             [
                 'pattern' => '<action>',
                 'route' => 'main/default/<action>',
@@ -69,30 +100,47 @@ class CmsKernelComponent extends BaseObject
                     'action' => 'index',
                 ],
             ],
-            [
-                'pattern' => 'admin',
-                'route' => 'admin/admin/index',
-                'defaults' => [
-                    'action' => 'index',
-                    'isAdminInterface' => true,
-                ],
-            ],
-            [
-                'pattern' => 'admin/<module>/<action>',
-                'route' => '<module>/admin/<action>',
-                'defaults' => [
-                    'action' => 'index',
-                    'isAdminInterface' => true,
-                ],
-            ],
-            [
-                'pattern' => '<module>/<action>',
-                'route' => '<module>/default/<action>',
-                'defaults' => [
-                    'action' => 'index',
-                ],
-            ],
         ]);
+    }
+
+    private function addModulesRoutes()
+    {
+        $modules = array_keys($this->getActiveModules());
+
+        foreach ($modules as $module) {
+
+            // Frontend module routes
+            $routesFile = Yii::getAlias(sprintf('@app/modules/%s/routes/default.php', $module));
+            if (file_exists($routesFile)) {
+                $routes = require $routesFile;
+
+                foreach($routes as $key => $route) {
+                    if ($route['pattern']) {
+                        $route['pattern'] = $module . '/' . $route['pattern'];
+
+                        $routes[$key] = $route;
+                    }
+                }
+
+                Yii::$app->getUrlManager()->addRules($routes);
+            }
+
+            // Backend (Admin) module routes
+            $routesFile = Yii::getAlias(sprintf('@app/modules/%s/routes/admin.php', $module));
+            if (file_exists($routesFile)) {
+                $routes = require $routesFile;
+
+                foreach($routes as $key => $route) {
+                    if ($route['pattern']) {
+                        $route['pattern'] = 'admin/' . $module . '/' . $route['pattern'];
+
+                        $routes[$key] = $route;
+                    }
+                }
+
+                Yii::$app->getUrlManager()->addRules($routes);
+            }
+        }
     }
 
     private function selLocale()
@@ -106,7 +154,7 @@ class CmsKernelComponent extends BaseObject
         $pathInfo = Yii::$app->getRequest()->getPathInfo();
         $pathInfoParts = explode('/', $pathInfo);
 
-        return (isset($pathInfoParts[0]) && $pathInfoParts[0] === 'admin');
+        return (isset($pathInfoParts[0]) && $pathInfoParts[0] === 'admin' || $pathInfoParts[0] === 'install');
     }
 
     /**
