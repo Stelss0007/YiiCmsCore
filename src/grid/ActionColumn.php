@@ -9,10 +9,14 @@ class ActionColumn  extends BaseActionColumn
 {
     //public $headerOptions = ['class' => 'action-column btn-group  btn-group-sm'];
 
+    public $template = '{view} {update} {activate} {deactivate} {delete}';
+
     protected function initDefaultButtons()
     {
         $this->initDefaultButton('view', 'eye');
         $this->initDefaultButton('update', 'pencil');
+        $this->initDefaultButton('activate', 'play');
+        $this->initDefaultButton('deactivate', 'pause');
         $this->initDefaultButton('delete', 'trash', [
             'data-confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
             'data-method' => 'post',
@@ -38,6 +42,19 @@ class ActionColumn  extends BaseActionColumn
                         break;
                     case 'update':
                         $title = Yii::t('yii', 'Update');
+                        break;
+                    case 'activate':
+                        if (!$model->hasAttribute('active') || $model->active === 1) {
+                            return;
+                        }
+                        $title = Yii::t('app', 'Activate');
+                        break;
+                    case 'deactivate':
+                        if (!$model->hasAttribute('active') || $model->active === 0) {
+                            return;
+                        }
+
+                        $title = Yii::t('app', 'Deactivate');
                         break;
                     case 'delete':
                         $title = Yii::t('yii', 'Delete');

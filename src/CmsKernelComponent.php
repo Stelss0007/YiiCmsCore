@@ -33,22 +33,21 @@ class CmsKernelComponent extends BaseObject
     private function getActiveModules()
     {
         return [
+            'group' => [
+                'class' => 'app\modules\group\Module',
+            ],
             'theme' => [
                 'class' => 'app\modules\theme\Module',
             ],
-
             'user' => [
                 'class' => 'app\modules\user\Module',
             ],
             'module' => [
                 'class' => 'app\modules\module\Module',
             ],
-
-
             'admin' => [
                 'class' => 'app\modules\admin\Module',
             ],
-
 
         ];
     }

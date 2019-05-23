@@ -53,8 +53,78 @@ class CmsAdminController extends CmsController
         $params = $request->post('CmsActiveForm');
 
         CmsConfiguration::saveConfiguration($module, $params);
-        Yii::$app->session->setFlash('success', Yii::$app->controller->module->t('Changes saved successfully'));
+        $this->showMessage('Changes saved successfully');
 
         return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    /**
+     * @param integer $id
+     * @return \yii\web\Response
+     */
+    public function actionActivate($id)
+    {
+        $this->setActveStatus($id, 1);
+        $this->showMessage('Changes saved successfully');
+
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    /**
+     * @param integer $id
+     * @return \yii\web\Response
+     */
+    public function actionDeactivate($id)
+    {
+        $this->setActveStatus($id, 0);
+        $this->showMessage('Changes saved successfully');
+
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    /**
+     * @param integer $id
+     * @param integer $status
+     * @throws \Exception
+     */
+    protected function setActveStatus($id, $status)
+    {
+        if (!method_exists($this, 'findModel')) {
+            throw new \Exception('Method "findModel" is not exists');
+        }
+
+        $model = $this->findModel($id);
+
+        if (!$model->hasAttribute('active')) {
+            throw new \Exception('Field "active" is not exists');
+        }
+
+        $model->active = $status;
+        $model->save(false);
+    }
+
+    /**
+     * @param string $message
+     * @param string $type
+     * @param null|array $keys
+     */
+    protected function showMessage($message, $type = 'success', $keys = null)
+    {
+        Yii::$app->session->setFlash($type, Yii::$app->controller->module->t($message, $keys));
+    }
+
+    protected function showSuccess($message, $keys = null)
+    {
+        $this->showMessage($message, 'success', $keys);
+    }
+
+    protected function showDanger($message, $keys = null)
+    {
+        $this->showMessage($message, 'error', $keys);
+    }
+
+    protected function showWarning($message, $keys = null)
+    {
+        $this->showMessage($message, 'error', $keys);
     }
 }

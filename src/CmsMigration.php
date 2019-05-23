@@ -198,7 +198,7 @@ class CmsMigration
                     continue;
                 }
                 $path = $migrationPath . DIRECTORY_SEPARATOR . $file;
-                if (preg_match('/^(m(\d{6}_?\d{6})\D.*?)\.php$/is', $file, $matches) && is_file($path)) {
+                if (preg_match('/^((.*?_?\d{6})\D.*?)\.php$/is', $file, $matches) && is_file($path)) {
                     $class = $matches[1];
                     if (!empty($namespace)) {
                         $class = $namespace . '\\' . $class;
