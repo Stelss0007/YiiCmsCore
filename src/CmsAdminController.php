@@ -84,6 +84,32 @@ class CmsAdminController extends CmsController
 
     /**
      * @param integer $id
+     * @return \yii\web\Response
+     */
+    public function actionUp($id)
+    {
+        /** @var CmsActiveRecord $model */
+        $model = $this->findModel($id);
+        $model->weightUp();
+
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    /**
+     * @param integer $id
+     * @return \yii\web\Response
+     */
+    public function actionDown($id)
+    {
+        /** @var CmsActiveRecord $model */
+        $model = $this->findModel($id);
+        $model->weightDown();
+
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
+    /**
+     * @param integer $id
      * @param integer $status
      * @throws \Exception
      */
@@ -97,6 +123,27 @@ class CmsAdminController extends CmsController
 
         if (!$model->hasAttribute('active')) {
             throw new \Exception('Field "active" is not exists');
+        }
+
+        $model->active = $status;
+        $model->save(false);
+    }
+
+    /**
+     * @param integer $id
+     * @param integer $status
+     * @throws \Exception
+     */
+    protected function setWeight($id, $status)
+    {
+        if (!method_exists($this, 'findModel')) {
+            throw new \Exception('Method "findModel" is not exists');
+        }
+
+        $model = $this->findModel($id);
+
+        if (!$model->hasAttribute('weight')) {
+            throw new \Exception('Field "weight" is not exists');
         }
 
         $model->active = $status;

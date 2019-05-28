@@ -36,6 +36,9 @@ class CmsKernelComponent extends BaseObject
             'group' => [
                 'class' => 'app\modules\group\Module',
             ],
+            'permission' => [
+                'class' => 'app\modules\permission\Module',
+            ],
             'theme' => [
                 'class' => 'app\modules\theme\Module',
             ],
