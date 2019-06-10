@@ -33,6 +33,9 @@ class CmsKernelComponent extends BaseObject
     private function getActiveModules()
     {
         return [
+            'main' => [
+                'class' => 'app\modules\main\Module',
+            ],
             'group' => [
                 'class' => 'app\modules\group\Module',
             ],
@@ -48,9 +51,9 @@ class CmsKernelComponent extends BaseObject
             'module' => [
                 'class' => 'app\modules\module\Module',
             ],
-            'admin' => [
-                'class' => 'app\modules\admin\Module',
-            ],
+//            'admin' => [
+//                'class' => 'app\modules\admin\Module',
+//            ],
 
         ];
     }
@@ -89,6 +92,11 @@ class CmsKernelComponent extends BaseObject
             ['class' => CmsUrlRule::class],
 
             [
+                'pattern' => 'admin',
+                'route' => 'main/admin/index',
+            ],
+
+            [
                 'pattern' => 'install',
                 'route' => 'install/default/index',
                 'defaults' => [
@@ -102,6 +110,8 @@ class CmsKernelComponent extends BaseObject
                     'action' => 'index',
                 ],
             ],
+
+
         ]);
     }
 

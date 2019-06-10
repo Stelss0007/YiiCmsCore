@@ -36,6 +36,10 @@ class CmsModule extends Module
     {
         $translateCategory = self::getTranlateCategory();
 
+        if (isset(Yii::$app->i18n->translations[$translateCategory])) {
+            return;
+        }
+
         Yii::$app->i18n->translations[$translateCategory] = [
             'class'          => 'yii\i18n\PhpMessageSource',
             'sourceLanguage' => 'en',
